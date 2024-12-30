@@ -2,6 +2,7 @@ function Gameboard() {
   const board = [];
 
   const getBoard = () => board;
+
   const getCellValueBoard = () =>
     board.map((row) => row.map((cell) => cell.getValue()));
 
@@ -17,25 +18,22 @@ function Gameboard() {
     return array.every((el) => el === "1") || array.every((el) => el === "2");
   };
 
-  const threeInRow = () => {
-    const cellValueBoard = getCellValueBoard();
-    const cellValueBoardEquals = cellValueBoard
+  const threeInRow = (board) => {
+    const cellValueBoardEquals = board
       .map((row) => checkAllEquals(row))
       .reduce((acc, num) => acc || num);
     return cellValueBoardEquals;
   };
 
-  const threeInColumn = () => {
-    const cellValueBoard = getCellValueBoard();
+  const threeInColumn = (board) => {
     for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
-        let inter = cellValueBoard[i][j];
-        cellValueBoard[i][j] = cellValueBoard[j][i];
-        cellValueBoard[j][i] = inter;
+      for (let j = i; j < 3; j++) {
+        [board[i][j], board[j][i]] = [board[j][i], board[i][j]];
       }
     }
-    console.log(cellValueBoard);
+    return threeInRow(board);
   };
+
   const threeInDiagonal = () => {
     const cellValueBoard = getCellValueBoard();
   };
@@ -50,7 +48,14 @@ function Gameboard() {
     console.log(getCellValueBoard());
   };
 
-  return { getBoard, printBoard, addToken, threeInRow, threeInColumn };
+  return {
+    getBoard,
+    printBoard,
+    addToken,
+    threeInRow,
+    threeInColumn,
+    getCellValueBoard,
+  };
 }
 
 function Cell() {
@@ -108,10 +113,9 @@ const board = Gameboard();
 board.addToken("2", 0, 0);
 board.addToken("2", 1, 0);
 board.addToken("2", 2, 0);
-board.addToken("2", 0, 2);
 board.addToken("2", 1, 2);
-board.addToken("2", 2, 2);
 
 board.printBoard();
 // board.threeInRow();
-board.threeInColumn();
+console.log(board.threeInColumn(board.getCellValueBoard()));
+board.threeInColumn(board.getCellValueBoard());
