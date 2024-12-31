@@ -11,6 +11,8 @@ body {
   font-family: "Press Start 2P", Roboto, "Open Sans", sans-serif;
   padding: 20px;
   cursor: url("./assets/cursor.png"), auto;
+  display: grid;
+  gap: 40px;
 }
 
 img,
@@ -31,7 +33,7 @@ select {
 header {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  align-items: center;
   font-size: 1.5rem;
 }
 
@@ -68,6 +70,11 @@ main {
   }
 }
 
+.players {
+  display: flex;
+  gap: 10px;
+}
+
 .gameboard-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -75,13 +82,17 @@ main {
 }
 
 .gameboard-cell {
-  border: 4px solid black;
+  border: 5px solid black;
   aspect-ratio: 1/1;
   min-width: 110px;
   font-size: 4rem;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.gameboard-cell.player {
+  border: 2px solid black;
 }
 
 .reset-button {
@@ -97,12 +108,12 @@ main {
   background-color: #6e1c1c;
 }
 
-.reset-button.result {
+.reset-button.result-button {
   background-color: #41ff57;
   box-shadow: inset -3px -3px #1c6e28;
 }
 
-.reset-button.result:hover {
+.reset-button.result-button:hover {
   background-color: #1c6e28;
 }
 
@@ -122,16 +133,39 @@ main {
   align-items: center;
   justify-content: space-around;
   flex-direction: column;
-  img {
-    width: 100px;
+
+  .tie,
+  .winner {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
+    .tie-img {
+      width: 200px;
+    }
+    .winner-img {
+      width: 80px;
+    }
+  }
+
+  .result-winner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 50px;
+    border: 4px solid rgb(253, 223, 2);
   }
 }
 
 footer {
+  margin-top: 20px;
   font-size: 0.5rem;
   img {
     width: 15px;
   }
+  text-align: center;
 }
 @media only screen and (max-width: 600px) {
   header {

@@ -126,6 +126,8 @@ function GameController() {
 
   const getResult = () => result;
 
+  const setResult = (newResult) => (result = newResult);
+
   const getActivePlayer = () => activePlayer;
 
   const setActivePlayer = (newPlayer) => (activePlayer = newPlayer);
@@ -175,6 +177,7 @@ function GameController() {
     board.cleanBoard();
     console.clear();
     setActivePlayer(players[0]);
+    setResult("");
     printRound();
   };
 
@@ -198,39 +201,74 @@ function ScreenController() {
   const mainElement = document.querySelector("main");
   const gameboard = game.getBoard();
 
-  const displayResult = () => {
+  const displayResult = (result) => {
     const dialogResultElement = document.querySelector(".result-dialog");
-    dialogResultElement.textContent = game.getResult();
+    if (result === "Tie") {
+      const tieElement = document.querySelector(".tie");
+      tieElement.style.display = "flex";
+    } else {
+      const winnerElement = document.querySelector(".winner");
+      const winnerResultElement = document.querySelector(".result-winner");
+      winnerResultElement.textContent = result;
+      winnerElement.style.display = "flex";
+    }
     dialogResultElement.showModal();
+    confetti();
   };
 
   const updateCellValue = (event) => {
     const posX = event.target.id[0];
     const posY = event.target.id[1];
     game.playRound(posX, posY);
+    displayActivePlayer();
     const cellElementToUpdate = event.target;
     cellElementToUpdate.textContent = gameboard[posX][posY].getValue();
     // once click remove the listener
     cellElementToUpdate.removeEventListener("click", updateCellValue);
     if (game.getResult() !== "") {
-      displayResult();
+      displayResult(game.getResult());
     }
+  };
+
+  const displayPlayers = () => {
+    const players = game.getPlayers();
+    players.forEach((player) => {
+      const playersElement = document.querySelector(".players");
+      const playerElement = document.createElement("div");
+      playerElement.classList = "gameboard-cell player";
+      playerElement.id = player.name;
+      playerElement.textContent = player.token;
+      playersElement.appendChild(playerElement);
+    });
+  };
+
+  const displayActivePlayer = () => {
+    const playerInactive = game
+      .getPlayers()
+      .find((player) => player.name !== game.getActivePlayer().name);
+    const playerInactiveElement = document.getElementById(
+      `${playerInactive.name}`
+    );
+    const playerActiveElement = document.getElementById(
+      `${game.getActivePlayer().name}`
+    );
+    playerActiveElement.style.borderWidth = "7px";
+    playerInactiveElement.style.borderWidth = "2px";
   };
 
   const resetBoard = () => {
     const gameboardElement = document.querySelector(".gameboard");
+    const resetButton = document.querySelector(".reset-button");
     game.resetBoard();
     gameboardElement.remove();
     const newGameboard = document.createElement("div");
     newGameboard.classList = "gameboard";
-    mainElement.prepend(newGameboard);
+    mainElement.insertBefore(newGameboard, resetButton);
     displayInitialBoard();
+    displayActivePlayer();
   };
 
   const displayInitialBoard = () => {
-    const dialogResultElement = document.querySelector(".result-dialog");
-    dialogResultElement.showModal();
-
     const gameboardElement = document.querySelector(".gameboard");
     gameboard.forEach((row, i) => {
       const rowElement = document.createElement("div");
@@ -246,9 +284,21 @@ function ScreenController() {
     });
 
     const resetButtonElement = document.querySelector(".reset-button");
+    const resultButtonElement = document.querySelector(".result-button");
     resetButtonElement.addEventListener("click", resetBoard);
+    resultButtonElement.addEventListener("click", () => {
+      const dialogResultElement = document.querySelector(".result-dialog");
+      const tieElement = document.querySelector(".tie");
+      const winnerElement = document.querySelector(".winner");
+      resetBoard();
+      dialogResultElement.close();
+      tieElement.style.display = "none";
+      winnerElement.style.display = "none";
+    });
   };
 
+  displayPlayers();
+  displayActivePlayer();
   displayInitialBoard();
 }
 

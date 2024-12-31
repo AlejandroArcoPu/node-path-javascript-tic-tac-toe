@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="./styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script src="./script.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,9 +24,15 @@
       <button class="reset-button">RESTART GAME</button>
       <dialog class="result-dialog">
         <div class="result-div">
-          <p>TIE!</p>
-          <img src="./assets/winner.png" alt="" />
-          <button class="reset-button result">START AGAIN</button>
+          <div class="tie">
+            <p>TIE!</p>
+            <img class="tie-img" src="./assets/tie.png" alt="Two heart hands" />
+          </div>
+          <div class="winner">
+            <p>WINNER!</p>
+            <div class="result-winner"></div>
+          </div>
+          <button class="reset-button result-button">START AGAIN</button>
         </div>
       </dialog>
     </main>
