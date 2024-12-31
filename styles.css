@@ -1,0 +1,44 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  font-family: "Press Start 2P", Roboto, "Open Sans", sans-serif;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+.gameboard {
+  width: 400px;
+  height: 400px;
+  border: 1px solid black;
+  display: grid;
+}
+
+.gameboard-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border: 1px solid black;
+}
+
+.gameboard-cell {
+  border: 1px solid black;
+}

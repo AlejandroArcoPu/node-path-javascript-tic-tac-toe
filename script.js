@@ -1,41 +1,66 @@
 function Gameboard() {
   const board = [];
 
+  const size = 3;
+
   const getBoard = () => board;
 
   const getCellValueBoard = () =>
     board.map((row) => row.map((cell) => cell.getValue()));
 
   // Initial board
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < size; i++) {
     board[i] = [];
-    for (let j = 0; j < 3; j++) {
+    for (let j = 0; j < size; j++) {
       board[i].push(Cell());
     }
   }
 
-  const checkAllEquals = (array) => {
+  const checkArrayEquals = (array) => {
     return array.every((el) => el === "1") || array.every((el) => el === "2");
   };
 
   const threeInRow = (board) => {
     const cellValueBoardEquals = board
-      .map((row) => checkAllEquals(row))
+      .map((row) => checkArrayEquals(row))
       .reduce((acc, num) => acc || num);
     return cellValueBoardEquals;
   };
 
   const threeInColumn = (board) => {
-    for (let i = 0; i < 3; i++) {
-      for (let j = i; j < 3; j++) {
+    for (let i = 0; i < size; i++) {
+      for (let j = i; j < size; j++) {
+        // invert
         [board[i][j], board[j][i]] = [board[j][i], board[i][j]];
       }
     }
     return threeInRow(board);
   };
 
-  const threeInDiagonal = () => {
-    const cellValueBoard = getCellValueBoard();
+  const threeInRightDiagonal = (board) => {
+    if (board[0][0] === "1" || board[0][0] === "2") {
+      for (let i = 0; i < size; i++) {
+        if (board[i][i] !== board[0][0]) return false;
+      }
+      return true;
+    }
+    return false;
+  };
+
+  const threeInLeftDiagonal = (board) => {
+    if (board[0][size - 1] === "1" || board[0][size - 1] === "2") {
+      for (let i = 0; i < size; i++) {
+        if (board[i][size - 1 - i] !== board[0][size - 1]) return false;
+      }
+      return true;
+    }
+    return false;
+  };
+
+  const hasAnyGap = () => {
+    return getCellValueBoard()
+      .map((row) => row.find((ele) => ele !== "1" && ele !== "2"))
+      .some((ele) => ele != undefined);
   };
 
   const addToken = (token, row, column) => {
@@ -55,6 +80,9 @@ function Gameboard() {
     threeInRow,
     threeInColumn,
     getCellValueBoard,
+    threeInRightDiagonal,
+    threeInLeftDiagonal,
+    hasAnyGap,
   };
 }
 
@@ -90,32 +118,68 @@ function GameController() {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
 
-  const checkWinner = () => {};
+  const hasWinner = () => {
+    return (
+      board.threeInRow(board.getCellValueBoard()) ||
+      board.threeInColumn(board.getCellValueBoard()) ||
+      board.threeInLeftDiagonal(board.getCellValueBoard()) ||
+      board.threeInRightDiagonal(board.getCellValueBoard())
+    );
+  };
 
   const printRound = () => {
-    board.printBoard();
-    console.log(`Turn of ${activePlayer.name}`);
+    if (hasWinner()) {
+      console.log(
+        `We have a winner. ${
+          players.find((player) => player != getActivePlayer()).name
+        } wins.`
+      );
+      board.printBoard();
+    } else if (!board.hasAnyGap()) {
+      console.log("Tie!");
+      board.printBoard();
+    } else {
+      board.printBoard();
+      console.log(`Turn of ${activePlayer.name}`);
+    }
   };
 
   const playRound = (row, column) => {
-    console.log(`Adding token to position ${row},${column}`);
-    board.addToken(getActivePlayer().token, row, column);
-    switchActivePlayer();
-    printRound();
+    if (!hasWinner() && board.hasAnyGap()) {
+      console.log(`Adding token to position ${row},${column}`);
+      board.addToken(getActivePlayer().token, row, column);
+      switchActivePlayer();
+      printRound();
+    }
   };
 
   printRound();
 
-  return { activePlayer, switchActivePlayer, playRound, getActivePlayer };
+  return {
+    activePlayer,
+    switchActivePlayer,
+    playRound,
+    getActivePlayer,
+    players,
+    getBoard: board.getBoard,
+  };
 }
 
-const board = Gameboard();
-board.addToken("2", 0, 0);
-board.addToken("2", 1, 0);
-board.addToken("2", 2, 0);
-board.addToken("2", 1, 2);
+function ScreenController() {
+  const game = GameController();
 
-board.printBoard();
-// board.threeInRow();
-console.log(board.threeInColumn(board.getCellValueBoard()));
-board.threeInColumn(board.getCellValueBoard());
+  const gameboardElement = document.querySelector(".gameboard");
+  const gameboard = game.getBoard();
+  gameboard.forEach((row) => {
+    const rowElement = document.createElement("div");
+    rowElement.classList = "gameboard-row";
+    gameboardElement.appendChild(rowElement);
+    row.forEach((cell) => {
+      const cellElement = document.createElement("div");
+      cellElement.classList = "gameboard-cell";
+      rowElement.appendChild(cellElement);
+    });
+  });
+}
+
+ScreenController();
