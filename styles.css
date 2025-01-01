@@ -9,10 +9,11 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   font-family: "Press Start 2P", Roboto, "Open Sans", sans-serif;
-  padding: 20px;
+  padding: 30px;
   cursor: url("./assets/cursor.png"), auto;
   display: grid;
   gap: 40px;
+  color: black;
 }
 
 img,
@@ -167,6 +168,7 @@ footer {
   }
   text-align: center;
 }
+
 @media only screen and (max-width: 600px) {
   header {
     font-size: 1.2rem;
