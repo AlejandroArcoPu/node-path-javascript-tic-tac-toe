@@ -160,6 +160,10 @@ main {
   }
 }
 
+button {
+  color: black;
+}
+
 footer {
   margin-top: 20px;
   font-size: 0.5rem;
