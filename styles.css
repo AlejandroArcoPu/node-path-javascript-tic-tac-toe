@@ -155,7 +155,7 @@ main {
     justify-content: center;
     width: 150px;
     height: 50px;
-    border: 4px solid rgb(253, 223, 2);
+    border: 4px solid black;
   }
 }
 
